@@ -42,6 +42,7 @@ DHT-MQTT-DISPlAY/
 │   └── index.html
 ├── PROCESS.md
 └── README.md
+
 ```
 
 ## Part 1: Arduino Setup

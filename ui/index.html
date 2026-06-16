@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Dashboard</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .status {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .temp-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .temp-value {
+            font-size: 80px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .temp-label {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+        .timestamp {
+            margin-top: 20px;
+            color: #666;
+            text-align: center;
+            font-size: 14px;
+        }
+        .history {
+            margin-top: 30px;
+        }
+        .history h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-item {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌡️ Temperature Dashboard</h1>
+        <div class="status disconnected" id="status">Disconnected from broker</div>
+        <div class="temp-card">
+            <div class="temp-label">Current Temperature</div>
+            <div class="temp-value" id="temp">--</div>
+            <div class="temp-label">°C</div>
+        </div>
+        <div class="timestamp" id="timestamp">Waiting for data...</div>
+        <div class="history">
+            <h2>Recent Readings</h2>
+            <div class="history-list" id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const MQTT_BROKER = 'broker.benax.rw';
+        const MQTT_PORT = 8083;
+        const MQTT_TOPIC = 'temperature/sensor_data_prince';
+
+        let history = [];
+
+        const statusEl = document.getElementById('status');
+        const tempEl = document.getElementById('temp');
+        const timestampEl = document.getElementById('timestamp');
+        const historyListEl = document.getElementById('history-list');
+
+        const client = mqtt.connect(`wss://${MQTT_BROKER}:${MQTT_PORT}`);
+
+        client.on('connect', () => {
+            statusEl.textContent = 'Connected to broker';
+            statusEl.classList.remove('disconnected');
+            statusEl.classList.add('connected');
+            client.subscribe(MQTT_TOPIC, (err) => {
+                if (!err) {
+                    console.log('Subscribed to topic:', MQTT_TOPIC);
+                }
+            });
+        });
+
+        client.on('error', (err) => {
+            console.error('MQTT error:', err);
+            statusEl.textContent = 'Error connecting to broker';
+            statusEl.classList.remove('connected');
+            statusEl.classList.add('disconnected');
+        });
+
+        client.on('message', (topic, message) => {
+            try {
+                const data = JSON.parse(message.toString());
+                updateDisplay(data);
+            } catch (err) {
+                console.error('Error parsing message:', err);
+            }
+        });
+
+        function updateDisplay(data) {
+            tempEl.textContent = data.temperature.toFixed(1);
+            
+            const date = new Date(data.timestamp);
+            timestampEl.textContent = `Last updated: ${date.toLocaleString()}`;
+
+            history.unshift(data);
+            if (history.length > 10) history.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            historyListEl.innerHTML = '';
+            history.forEach(item => {
+                const date = new Date(item.timestamp);
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <span>${date.toLocaleTimeString()}</span>
+                    <span>${item.temperature.toFixed(1)} °C</span>
+                `;
+                historyListEl.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -8,7 +8,7 @@ The dashboard is deployed on a VPS and available at:
 
 ## System Architecture
 
-[SYSTEM_ARCHITECTURE.png]/(SYSTEM_ARCHITECTURE.png)
+![System Architecture](SYSTEM_ARCHITECTURE.png)
 
 ## Project Structure
 ```
@@ -104,4 +104,4 @@ To use it:
 - **MQTT Topic**: prince_bonheur/sensor_data
 - **MQTT Websocket Port (for dashboard): 8884
 
-**Visit [PROCESS.md]/(./PROCESS.md) to see how everyting ws made togehter with screenshots**
+**Visit [PROCESS.md](./PROCESS.md) to see how everyting ws made togehter with screenshots**

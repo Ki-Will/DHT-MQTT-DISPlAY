@@ -6,15 +6,15 @@ This document outlines the development process and screenshots of the Temperatur
 
 1. **Arduino & LCD Setup**
    - Shows the Arduino Uno connected to DHT11 and I2C LCD
-   - [Screenshot 2026-06-16 103952.png](pictures-progress/Screenshot 2026-06-16 103952.png)
+   - ![Arduino & LCD Setup](pictures-progress/Screenshot%202026-06-16%20103952.png)
 
 2. **Python PC Client Running**
    - Shows the client connected to COM10 and reading temperature data
-   - [Screenshot 2026-06-16 112302.png](pictures-progress/Screenshot 2026-06-16 112302.png)
+   - ![Python PC Client Running](pictures-progress/Screenshot%202026-06-16%20112302.png)
 
 3. **Live Dashboard**
    - Shows the real-time temperature data on the dashboard
-   - [Screenshot 2026-06-16 112237.png](pictures-progress/Screenshot 2026-06-16 112237.png)
+   - ![Live Dashboard](pictures-progress/Screenshot%202026-06-16%20112237.png)
 
 ## Key Milestones
 

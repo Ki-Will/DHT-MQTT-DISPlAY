@@ -2,6 +2,10 @@
 
 A complete embedded system for temperature monitoring using Arduino, LCD, PC Client, and MQTT Broker.
 
+## Live Dashboard
+The dashboard is deployed on a VPS and available at:
+[http://157.173.101.159:8228/](http://157.173.101.159:8228/)
+
 ## System Architecture
 
 ```mermaid
@@ -10,8 +14,8 @@ flowchart TD
     B --> C[16x2 LCD Display]
     B --> D[USB Serial 9600bps]
     D --> E[Python PC Client]
-    E --> F[MQTT Broker VPS broker.hivemq.com]
-    F --> G[Dashboard Subscriber]
+    E --> F[MQTT Broker broker.hivemq.com]
+    F --> G[Dashboard on VPS http://157.173.101.159:8228/]
     style A fill:#ffcccc
     style B fill:#ccffcc
     style C fill:#ccccff
@@ -36,6 +40,7 @@ DHT-MQTT-DISPlAY/
 │   └── package-lock.json
 ├── ui/
 │   └── index.html
+├── PROCESS.md
 └── README.md
 ```
 

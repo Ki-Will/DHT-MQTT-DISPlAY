@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Monitoring System</title>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -248,15 +248,15 @@
 
     <script>
         const MQTT_BROKER = 'broker.benax.rw';
-        const MQTT_PORT = 1883;
+        const MQTT_PORT = 8083;
         const MQTT_TOPIC = 'temperature/sensor_data_prince';
+        const clientID = "web_dashboard_" + Math.random().toString(16).substr(2, 8);
 
+        let client;
         const statusEl = document.getElementById('status');
         const tempEl = document.getElementById('temp');
         const timestampEl = document.getElementById('timestamp');
         const historyBodyEl = document.getElementById('history-body');
-
-        const client = mqtt.connect(`wss://${MQTT_BROKER}:${MQTT_PORT}`);
 
         function addLog(message, type = 'system') {
             const time = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -267,36 +267,66 @@
             historyBodyEl.scrollTop = historyBodyEl.scrollHeight;
         }
 
-        client.on('connect', () => {
+        function connectMQTT() {
+            addLog('[SYSTEM] Connecting to broker.benax.rw over WebSockets...', 'system');
+            statusEl.classList.remove('connected');
+            statusEl.classList.add('disconnected');
+            statusEl.querySelector('span:nth-child(2)').textContent = 'Connecting';
+
+            client = new Paho.MQTT.Client(MQTT_BROKER, MQTT_PORT, clientID);
+
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+
+            const options = {
+                onSuccess: onConnect,
+                onFailure: onFailure,
+                useSSL: true,
+                timeout: 5
+            };
+
+            client.connect(options);
+        }
+
+        function onConnect() {
             statusEl.classList.remove('disconnected');
             statusEl.classList.add('connected');
             statusEl.querySelector('span:nth-child(2)').textContent = 'Connected';
             addLog('[SYSTEM] Connection established with broker.benax.rw', 'system');
-            client.subscribe(MQTT_TOPIC, (err) => {
-                if (!err) {
-                    addLog(`[SYSTEM] Subscribed to topic: ${MQTT_TOPIC}`, 'system');
-                } else {
-                    addLog(`[ERROR] Subscription failed: ${err}`, 'error');
-                }
-            });
-        });
 
-        client.on('error', (err) => {
+            client.subscribe(MQTT_TOPIC);
+            addLog(`[SYSTEM] Subscribed to topic: ${MQTT_TOPIC}`, 'system');
+        }
+
+        function onFailure(error) {
+            addLog(`[ERROR] Connection failed: ${error.errorMessage}`, 'error');
             statusEl.classList.remove('connected');
             statusEl.classList.add('disconnected');
-            statusEl.querySelector('span:nth-child(2)').textContent = 'Error';
-            addLog(`[ERROR] MQTT connection error: ${err.message}`, 'error');
-        });
+            statusEl.querySelector('span:nth-child(2)').textContent = 'Failed';
+            setTimeout(connectMQTT, 5000);
+        }
 
-        client.on('message', (topic, message) => {
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                addLog(`[ERROR] Connection lost: ${responseObject.errorMessage}`, 'error');
+                statusEl.classList.remove('connected');
+                statusEl.classList.add('disconnected');
+                statusEl.querySelector('span:nth-child(2)').textContent = 'Reconnecting';
+                tempEl.innerHTML = `--.<span style="font-size: 2rem;">0</span><span class="temp-unit">°C</span>`;
+                setTimeout(connectMQTT, 5000);
+            }
+        }
+
+        function onMessageArrived(message) {
+            addLog(`[DATA] Received message on ${message.destinationName}`, 'data');
             try {
-                const data = JSON.parse(message.toString());
+                const data = JSON.parse(message.payloadString);
                 updateDisplay(data);
-                addLog(`[DATA] Received reading: ${data.temperature.toFixed(1)}°C`, 'data');
+                addLog(`[DATA] Temperature: ${data.temperature.toFixed(1)}°C`, 'data');
             } catch (err) {
                 addLog(`[ERROR] Failed to parse payload: ${err}`, 'error');
             }
-        });
+        }
 
         function updateDisplay(data) {
             const tempStr = data.temperature.toFixed(1).split('.');
@@ -305,6 +335,8 @@
             const date = new Date(data.timestamp);
             timestampEl.textContent = `Last updated: ${date.toLocaleString()}`;
         }
+
+        window.onload = connectMQTT;
     </script>
 </body>
 </html>

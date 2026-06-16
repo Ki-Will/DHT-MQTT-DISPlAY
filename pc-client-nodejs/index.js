@@ -5,7 +5,7 @@ const mqtt = require('mqtt');
 const SERIAL_PORT = 'COM10';
 const BAUD_RATE = 9600;
 const MQTT_BROKER = 'mqtt://broker.benax.rw:1883';
-const MQTT_TOPIC = 'temperature/sensor_data_prince';
+const MQTT_TOPIC = 'prince_bonheur/sensor_data';
 
 const serialPort = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
 const parser = serialPort.pipe(new ReadlineParser({ delimiter: '\n' }));

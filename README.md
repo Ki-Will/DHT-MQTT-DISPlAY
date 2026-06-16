@@ -94,7 +94,7 @@ Update the following in `pc-client-python/index.py`:
 - `SERIAL_PORT`: Your Arduino's COM port (e.g., COM10 on Windows)
 - `MQTT_BROKER`: broker.benax.rw (already set)
 - `MQTT_PORT`: 1883 (already set)
-- `MQTT_TOPIC`: temperature/sensor_data_prince (already set)
+- `MQTT_TOPIC`: prince_bonheur/sensor_data (already set)
 
 ### Running the Client
 ```bash
@@ -116,7 +116,7 @@ To use it:
 - **Serial Communication**: Between Arduino and PC at 9600 baud
 - **MQTT Broker**: broker.hivemq.com
 - **MQTT Port**: 1883
-- **MQTT Topic**: temperature/sensor_data_prince
+- **MQTT Topic**: prince_bonheur/sensor_data
 - **MQTT Websocket Port (for dashboard): 8884
 
 **Visit [PROCESS.md]/(./PROCESS.md) to see how everyting ws made togehter with screenshots**

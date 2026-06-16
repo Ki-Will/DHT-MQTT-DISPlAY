@@ -9,7 +9,7 @@ SERIAL_PORT = 'COM10'
 BAUD_RATE = 9600
 MQTT_BROKER = 'broker.hivemq.com'
 MQTT_PORT = 1883
-MQTT_TOPIC = 'prince_bonheur/temperature_data'
+MQTT_TOPIC = 'prince_bonheur/temperature_sensora'
 
 
 def on_connect(client, userdata, flags, rc, properties=None):

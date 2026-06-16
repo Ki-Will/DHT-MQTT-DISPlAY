@@ -8,22 +8,7 @@ The dashboard is deployed on a VPS and available at:
 
 ## System Architecture
 
-```mermaid
-flowchart TD
-    A[DHT11 Temperature Sensor] --> B[Arduino Uno]
-    B --> C[16x2 LCD Display]
-    B --> D[USB Serial 9600bps]
-    D --> E[Python PC Client]
-    E --> F[MQTT Broker broker.hivemq.com]
-    F --> G[Dashboard on VPS http://157.173.101.159:8228/]
-    style A fill:#ffcccc
-    style B fill:#ccffcc
-    style C fill:#ccccff
-    style D fill:#ffccff
-    style E fill:#ffffcc
-    style F fill:#ccffff
-    style G fill:#ffcccc
-```
+[SYSTEM_ARCHITECTURE.png]/(SYSTEM_ARCHITECTURE.png)
 
 ## Project Structure
 ```

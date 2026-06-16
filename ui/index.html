@@ -3,107 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Dashboard</title>
+    <title>Temperature Monitoring System</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #05050a;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            color: white;
+            padding: 40px 20px;
         }
+
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
         }
-        h1 {
+
+        /* Header */
+        .header {
             text-align: center;
-            color: #333;
+            margin-bottom: 50px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: #1a1a24;
+            border: 1px solid #2a2a3a;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ff4444;
+        }
+
+        .status-badge.connected .status-dot {
+            background-color: #44ff44;
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 800;
             margin-bottom: 10px;
         }
-        .status {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 10px;
-            border-radius: 10px;
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 1.2rem;
         }
-        .status.connected {
-            background-color: #d4edda;
-            color: #155724;
+
+        /* Content Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
-        .status.disconnected {
-            background-color: #f8d7da;
-            color: #721c24;
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
-        .temp-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 15px;
+
+        /* Cards */
+        .card {
+            background-color: #0a0a12;
+            border: 1px solid #1a1a24;
             padding: 30px;
-            text-align: center;
-            color: white;
         }
-        .temp-value {
-            font-size: 80px;
-            font-weight: bold;
+
+        /* Temperature Card */
+        .temp-card {
+            border-left: 2px solid #4f46e5;
+        }
+
+        .temp-card h2 {
+            font-size: 1.4rem;
+            color: #d1d5db;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .temp-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
             margin: 20px 0;
         }
-        .temp-label {
-            font-size: 24px;
-            opacity: 0.9;
+
+        .temp-unit {
+            font-size: 2rem;
+            color: #9ca3af;
+            margin-left: 5px;
         }
-        .timestamp {
-            margin-top: 20px;
-            color: #666;
-            text-align: center;
-            font-size: 14px;
+
+        .last-update {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 15px;
         }
-        .history {
-            margin-top: 30px;
+
+        /* History Card (Terminal Style) */
+        .history-card {
+            border: 1px solid #1a1a24;
         }
-        .history h2 {
-            color: #333;
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             margin-bottom: 15px;
-            font-size: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1a1a24;
         }
-        .history-list {
-            max-height: 200px;
+
+        .history-header span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .history-header .red {
+            background-color: #ff5f56;
+        }
+
+        .history-header .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .history-header .green {
+            background-color: #27c93f;
+        }
+
+        .history-header h3 {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-left: 10px;
+        }
+
+        .history-body {
+            background-color: #08080f;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 350px;
             overflow-y: auto;
         }
-        .history-item {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 8px;
+
+        .log-line {
+            color: #6b7280;
             margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
+        }
+
+        .log-line.system {
+            color: #4f46e5;
+        }
+
+        .log-line.data {
+            color: #10b981;
+        }
+
+        .log-line.error {
+            color: #ef4444;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #334155;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌡️ Temperature Dashboard</h1>
-        <div class="status disconnected" id="status">Disconnected from broker</div>
-        <div class="temp-card">
-            <div class="temp-label">Current Temperature</div>
-            <div class="temp-value" id="temp">--</div>
-            <div class="temp-label">°C</div>
+        <div class="header">
+            <div class="status-badge disconnected" id="status">
+                <span class="status-dot"></span>
+                <span>Disconnected</span>
+            </div>
+            <h1>Temperature System</h1>
+            <p class="subtitle">Real-time DHT11 temperature monitoring &amp; MQTT dashboard.</p>
         </div>
-        <div class="timestamp" id="timestamp">Waiting for data...</div>
-        <div class="history">
-            <h2>Recent Readings</h2>
-            <div class="history-list" id="history-list"></div>
+
+        <div class="grid">
+            <!-- Temperature Card -->
+            <div class="card temp-card">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C13.1 2 14 2.9 14 4V14.17C14.83 14.58 15.5 15.45 15.5 16.5C15.5 18.43 13.93 20 12 20C10.07 20 8.5 18.43 8.5 16.5C8.5 15.45 9.17 14.58 10 14.17V4C10 2.9 10.9 2 12 2Z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Live Temperature
+                </h2>
+                <div class="temp-display" id="temp">
+                    --.<span style="font-size: 2rem;">0</span>
+                    <span class="temp-unit">°C</span>
+                </div>
+                <div class="last-update" id="timestamp">
+                    Waiting for sensor data...
+                </div>
+            </div>
+
+            <!-- History Card (Terminal Style) -->
+            <div class="card history-card">
+                <div class="history-header">
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+                    <h3>temperature.log</h3>
+                </div>
+                <div class="history-body" id="history-body">
+                    <div class="log-line system">
+                        [SYSTEM] Dashboard initialized.
+                    </div>
+                    <div class="log-line">
+                        [SYSTEM] Listening for MQTT packets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            © 2026 Temperature Monitoring System | MQTT Broker: broker.benax.rw
         </div>
     </div>
 
@@ -112,65 +251,59 @@
         const MQTT_PORT = 8083;
         const MQTT_TOPIC = 'temperature/sensor_data_prince';
 
-        let history = [];
-
         const statusEl = document.getElementById('status');
         const tempEl = document.getElementById('temp');
         const timestampEl = document.getElementById('timestamp');
-        const historyListEl = document.getElementById('history-list');
+        const historyBodyEl = document.getElementById('history-body');
 
         const client = mqtt.connect(`wss://${MQTT_BROKER}:${MQTT_PORT}`);
 
+        function addLog(message, type = 'system') {
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const logLine = document.createElement('div');
+            logLine.className = `log-line ${type}`;
+            logLine.innerHTML = `${time} ${message}`;
+            historyBodyEl.appendChild(logLine);
+            historyBodyEl.scrollTop = historyBodyEl.scrollHeight;
+        }
+
         client.on('connect', () => {
-            statusEl.textContent = 'Connected to broker';
             statusEl.classList.remove('disconnected');
             statusEl.classList.add('connected');
+            statusEl.querySelector('span:nth-child(2)').textContent = 'Connected';
+            addLog('[SYSTEM] Connection established with broker.benax.rw', 'system');
             client.subscribe(MQTT_TOPIC, (err) => {
                 if (!err) {
-                    console.log('Subscribed to topic:', MQTT_TOPIC);
+                    addLog(`[SYSTEM] Subscribed to topic: ${MQTT_TOPIC}`, 'system');
+                } else {
+                    addLog(`[ERROR] Subscription failed: ${err}`, 'error');
                 }
             });
         });
 
         client.on('error', (err) => {
-            console.error('MQTT error:', err);
-            statusEl.textContent = 'Error connecting to broker';
             statusEl.classList.remove('connected');
             statusEl.classList.add('disconnected');
+            statusEl.querySelector('span:nth-child(2)').textContent = 'Error';
+            addLog(`[ERROR] MQTT connection error: ${err.message}`, 'error');
         });
 
         client.on('message', (topic, message) => {
             try {
                 const data = JSON.parse(message.toString());
                 updateDisplay(data);
+                addLog(`[DATA] Received reading: ${data.temperature.toFixed(1)}°C`, 'data');
             } catch (err) {
-                console.error('Error parsing message:', err);
+                addLog(`[ERROR] Failed to parse payload: ${err}`, 'error');
             }
         });
 
         function updateDisplay(data) {
-            tempEl.textContent = data.temperature.toFixed(1);
+            const tempStr = data.temperature.toFixed(1).split('.');
+            tempEl.innerHTML = `${tempStr[0]}.<span style="font-size: 2rem;">${tempStr[1]}</span><span class="temp-unit">°C</span>`;
             
             const date = new Date(data.timestamp);
             timestampEl.textContent = `Last updated: ${date.toLocaleString()}`;
-
-            history.unshift(data);
-            if (history.length > 10) history.pop();
-            renderHistory();
-        }
-
-        function renderHistory() {
-            historyListEl.innerHTML = '';
-            history.forEach(item => {
-                const date = new Date(item.timestamp);
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <span>${date.toLocaleTimeString()}</span>
-                    <span>${item.temperature.toFixed(1)} °C</span>
-                `;
-                historyListEl.appendChild(div);
-            });
         }
     </script>
 </body>

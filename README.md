@@ -10,14 +10,6 @@ The dashboard is deployed on a VPS and available at:
 
 [SYSTEM_ARCHITECTURE.png]/(SYSTEM_ARCHITECTURE.png)
 
-    style A fill:#1E3A8A,color:#FFFFFF,stroke:#60A5FA,stroke-width:2px
-    style B fill:#065F46,color:#FFFFFF,stroke:#34D399,stroke-width:2px
-    style C fill:#5B21B6,color:#FFFFFF,stroke:#A78BFA,stroke-width:2px
-    style D fill:#9D174D,color:#FFFFFF,stroke:#F472B6,stroke-width:2px
-    style E fill:#92400E,color:#FFFFFF,stroke:#FBBF24,stroke-width:2px
-    style F fill:#0F766E,color:#FFFFFF,stroke:#5EEAD4,stroke-width:2px
-    style G fill:#991B1B,color:#FFFFFF,stroke:#F87171,stroke-width:2px
-```
 ## Project Structure
 ```
 DHT-MQTT-DISPlAY/

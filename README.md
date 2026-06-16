@@ -10,7 +10,7 @@ flowchart TD
     B --> C[16x2 LCD Display]
     B --> D[USB Serial 9600bps]
     D --> E[Python PC Client]
-    E --> F[MQTT Broker VPS broker.benax.rw]
+    E --> F[MQTT Broker VPS broker.hivemq.com]
     F --> G[Dashboard Subscriber]
     style A fill:#ffcccc
     style B fill:#ccffcc
@@ -102,13 +102,13 @@ py index.py
 The dashboard is a simple HTML page located in `ui/index.html`.
 To use it:
 1. Open `ui/index.html` in your browser
-2. The dashboard will connect to broker.benax.rw automatically
+2. The dashboard will connect to broker.hivemq.com automatically
 3. It shows real-time temperature data and recent history!
 
 ## Communication Details
 
 - **Serial Communication**: Between Arduino and PC at 9600 baud
-- **MQTT Broker**: broker.benax.rw
+- **MQTT Broker**: broker.hivemq.com
 - **MQTT Port**: 1883
 - **MQTT Topic**: temperature/sensor_data_prince
-- **MQTT Websocket Port (for dashboard): 8083
+- **MQTT Websocket Port (for dashboard): 8884

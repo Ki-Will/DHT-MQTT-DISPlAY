@@ -242,13 +242,13 @@
         </div>
 
         <div class="footer">
-            © 2026 Temperature Monitoring System | MQTT Broker: broker.benax.rw
+            © 2026 Temperature Monitoring System | MQTT Broker: broker.hivemq.com
         </div>
     </div>
 
     <script>
-        const MQTT_BROKER = 'broker.benax.rw';
-        const MQTT_PORT = 8083;
+        const MQTT_BROKER = 'broker.hivemq.com';
+        const MQTT_PORT = 8884;
         const MQTT_TOPIC = 'temperature/sensor_data_prince';
         const clientID = "web_dashboard_" + Math.random().toString(16).substr(2, 8);
 
@@ -268,7 +268,7 @@
         }
 
         function connectMQTT() {
-            addLog('[SYSTEM] Connecting to broker.benax.rw over WebSockets...', 'system');
+            addLog('[SYSTEM] Connecting to broker.hivemq.com over WebSockets...', 'system');
             statusEl.classList.remove('connected');
             statusEl.classList.add('disconnected');
             statusEl.querySelector('span:nth-child(2)').textContent = 'Connecting';
@@ -292,7 +292,7 @@
             statusEl.classList.remove('disconnected');
             statusEl.classList.add('connected');
             statusEl.querySelector('span:nth-child(2)').textContent = 'Connected';
-            addLog('[SYSTEM] Connection established with broker.benax.rw', 'system');
+            addLog('[SYSTEM] Connection established with broker.hivemq.com', 'system');
 
             client.subscribe(MQTT_TOPIC);
             addLog(`[SYSTEM] Subscribed to topic: ${MQTT_TOPIC}`, 'system');

@@ -15,7 +15,7 @@ flowchart TD
     B --> D[USB Serial 9600bps]
     D --> E[Python PC Client]
     E --> F[MQTT Broker broker.hivemq.com]
-    F --> G[Dashboard on VPS http://157.173.101.159:8228/]
+    F --> G[Dashboard on VPS http://157.173.101.159:8228]
     style A fill:#ffcccc
     style B fill:#ccffcc
     style C fill:#ccccff

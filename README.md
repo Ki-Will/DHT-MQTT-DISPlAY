@@ -102,6 +102,6 @@ To use it:
 - **MQTT Broker**: broker.hivemq.com
 - **MQTT Port**: 1883
 - **MQTT Topic**: prince_bonheur/sensor_data
-- **MQTT Websocket Port (for dashboard): 8884
+- **MQTT Websocket**: Port (for dashboard): 8884
 
 **Visit [PROCESS.md](./PROCESS.md) to see how everyting ws made togehter with screenshots**

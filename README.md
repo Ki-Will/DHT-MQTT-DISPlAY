@@ -118,3 +118,5 @@ To use it:
 - **MQTT Port**: 1883
 - **MQTT Topic**: temperature/sensor_data_prince
 - **MQTT Websocket Port (for dashboard): 8884
+
+**Visit [PROCESS.md]/(./PROCESS.md) to see how everyting ws made togehter with screenshots**
